@@ -119,7 +119,7 @@ class Target:
                 other_names.append(res.name)
                 continue
             found.append(res)
-        if len(found) == 0:
+        if not found:
             if other_names:
                 raise NoResourceFoundError(
                     "all resources matching {} found in target {} have other names: {}".format(
@@ -159,7 +159,7 @@ class Target:
                 other_names.append(drv.name)
                 continue
             found.append(drv)
-        if len(found) == 0:
+        if not found:
             if other_names:
                 raise NoDriverFoundError(
                     "all drivers matching {} found in target {} have other names: {}".format(
@@ -214,7 +214,7 @@ class Target:
             if drv.state != BindingState.active:
                 continue
             found.append(drv)
-        if len(found) == 0:
+        if not found:
             if other_names:
                 raise NoDriverFoundError(
                     "all active drivers matching {} found in target {} have other names: {}".format(
