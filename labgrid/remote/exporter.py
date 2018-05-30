@@ -381,13 +381,9 @@ class ExporterSession(ApplicationSession):
         self.loop.stop()
 
     async def acquire(self, group_name, resource_name):
-        resource = self.groups[group_name][resource_name]
-        #resource.acquire()
         await self.update_resource(group_name, resource_name)
 
     async def release(self, group_name, resource_name):
-        resource = self.groups[group_name][resource_name]
-        #resource.release()
         await self.update_resource(group_name, resource_name)
 
     async def version(self):
