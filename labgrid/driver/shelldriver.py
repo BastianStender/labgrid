@@ -61,13 +61,14 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
             self._inject_run()
         if self.keyfile:
             self._put_ssh_key(self.keyfile)
-        self._run("dmesg -n 1")  # Turn off Kernel Messages to the console
+        # Turn off Kernel Messages to the console
+        self._run("dmesg -n 1")  # pylint: disable=missing-kwoa
 
     def on_deactivate(self):
         self._status = 0
 
     @step(args=['cmd'], result=True)
-    def _run(self, cmd, *, step, timeout=30.0, codec="utf-8", decodeerrors="strict"):
+    def _run(self, cmd, *, step, timeout=30.0, codec="utf-8", decodeerrors="strict"):  # pylint: disable=unused-argument
         """
         Runs the specified cmd on the shell and returns the output.
 
@@ -96,7 +97,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
 
     @Driver.check_active
     def run(self, cmd, timeout=30.0, codec="utf-8", decodeerrors="strict"):
-        return self._run(cmd, timeout=timeout, codec=codec, decodeerrors=decodeerrors)
+        return self._run(cmd, timeout=timeout, codec=codec, decodeerrors=decodeerrors)  # pylint: disable=missing-kwoa
 
     @step()
     def _await_login(self):
@@ -161,7 +162,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
             last_before = before
 
             if time.time() > start + self.login_timeout:
-                raise TIMEOUT("Timeout of {} seconds exceeded during waiting for login".format(self.login_timeout))
+                raise TIMEOUT("Timeout of {} seconds exceeded during waiting for login".format(self.login_timeout))  # pylint: disable=line-too-long
 
     @step()
     def get_status(self):
@@ -211,10 +212,10 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
                     format(keyfile)
                 )
         self.logger.debug("Read Key: %s", new_key)
-        auth_keys, _, read_keys = self._run("cat ~/.ssh/authorized_keys")
+        auth_keys, _, read_keys = self._run("cat ~/.ssh/authorized_keys")  # pylint: disable=missing-kwoa
         self.logger.debug("Exitcode trying to read keys: %s, keys: %s", read_keys, auth_keys)
         result = []
-        _, _, test_write = self._run("touch ~/.test")
+        _, _, test_write = self._run("touch ~/.test")  # pylint: disable=missing-kwoa
         if read_keys == 0:
             for line in auth_keys:
                 match = regex.match(line)
@@ -239,10 +240,10 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
 
         if test_write == 0:
             self.logger.debug("Key not on target, testing for .ssh directory")
-            _, _, ssh_dir = self._run("[ -d ~/.ssh/ ]")
+            _, _, ssh_dir = self._run("[ -d ~/.ssh/ ]")  # pylint: disable=missing-kwoa
             if ssh_dir != 0:
                 self.logger.debug("~/.ssh did not exist, creating")
-                self._run("mkdir ~/.ssh/")
+                self._run("mkdir ~/.ssh/")  # pylint: disable=missing-kwoa
             self._run_check("chmod 700 ~/.ssh/")
             self.logger.debug("Creating ~/.ssh/authorized_keys")
             self._run_check('echo "{}" > ~/.ssh/authorized_keys'.format(keyline))
@@ -251,10 +252,10 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
 
         self.logger.debug("Key not on target and not writeable, using bind mount...")
         self._run_check('mkdir -m 700 /tmp/labgrid-ssh/')
-        self._run("cp -a ~/.ssh/* /tmp/labgrid-ssh/")
+        self._run("cp -a ~/.ssh/* /tmp/labgrid-ssh/")  # pylint: disable=missing-kwoa
         self._run_check('echo "{}" >> /tmp/labgrid-ssh/authorized_keys'.format(keyline))
         self._run_check('chmod 600 /tmp/labgrid-ssh/authorized_keys')
-        out, err, exitcode = self._run('mount --bind /tmp/labgrid-ssh/ ~/.ssh/')
+        out, err, exitcode = self._run('mount --bind /tmp/labgrid-ssh/ ~/.ssh/')  # pylint: disable=missing-kwoa
         if exitcode != 0:
             self.logger.warning("Could not bind mount ~/.ssh directory: %s %s", out, err)
 
@@ -275,7 +276,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
             self.logger.debug('XMODEM GETC(%s): TIMEOUT after %d seconds', size, timeout)
             return None
 
-    def _xmodem_putc(self, data, timeout=1):
+    def _xmodem_putc(self, data, timeout=1):  # pylint: disable=unused-argument
         """ called by the xmodem.XMODEM instance to write protocol data to the console """
         # Note: we ignore the timeout because we cannot pass it through.
         self.logger.debug('XMODEM PUTC: %r', data)
@@ -298,10 +299,10 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
     def _get_xmodem_rx_cmd(self, filename):
         """ Detect which XMODEM receive command can be used on the target, and cache the result. """
         if not self._xmodem_cached_rx_cmd:
-            if self._run('which rx')[0]:
+            if self._run('which rx')[0]:  # pylint: disable=missing-kwoa
                 # busybox rx
                 self._xmodem_cached_rx_cmd = "rx '{filename}'"
-            elif self._run('which lrz')[0]:
+            elif self._run('which lrz')[0]:  # pylint: disable=missing-kwoa
                 # redirect stderr to prevent lrz from printing "ready to receive
                 # $file", which will confuse the XMODEM instance
                 self._xmodem_cached_rx_cmd = "lrz -X -y -c -b '{filename}' 2>/dev/null"
@@ -314,7 +315,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
     def _get_xmodem_sx_cmd(self, filename):
         """ Detect which XMODEM send command can be used on the target, and cache the result. """
         if not self._xmodem_cached_sx_cmd:
-            if self._run('which lsz')[0]:
+            if self._run('which lsz')[0]:  # pylint: disable=missing-kwoa
                 # redirect stderr to prevent lsz from printing "Give XMODEM receive
                 # cmd now", which will confuse the XMODEM instance
                 self._xmodem_cached_sx_cmd = "lsz -b -X -m 1200 -M 10 '{filename}' 2>/dev/null"
@@ -334,7 +335,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
         # file ourselves.
 
         def _target_cleanup(tmpfile):
-            self._run("rm -f '{}'".format(tmpfile))
+            self._run("rm -f '{}'".format(tmpfile))  # pylint: disable=missing-kwoa
 
         stream = io.BytesIO(buf)
 
@@ -362,7 +363,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
         # truncate the file to get rid of CPMEOF padding
         dd_cmd = "dd if='{}' of='{}' bs=1 count={}".format(tmpfile, remotefile, len(buf))
         self.logger.debug('dd command: %s', dd_cmd)
-        out, _, ret = self._run(dd_cmd)
+        out, _, ret = self._run(dd_cmd)  # pylint: disable=missing-kwoa
 
         _target_cleanup(tmpfile)
         if ret != 0:
@@ -413,7 +414,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
         self.logger.info('XMODEM send command on target: %s', cmd)
 
         # get file size to remove XMODEM's CPMEOF padding at the end of the last packet
-        out, _, ret = self._run("stat '{}'".format(remotefile))
+        out, _, ret = self._run("stat '{}'".format(remotefile))  # pylint: disable=missing-kwoa
         match = re.search(r'Size:\s+(?P<size>\d+)', '\n'.join(out))
         if ret != 0 or not match or not match.group("size"):
             raise ExecutionError("Could not stat '{}' on target".format(remotefile))
@@ -483,7 +484,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
         hardcoded_remote_file = '/tmp/labgrid-run-script'
         self._put_bytes(data, hardcoded_remote_file)
         self._run_check("chmod +x '{}'".format(hardcoded_remote_file))
-        return self._run(hardcoded_remote_file, timeout=timeout)
+        return self._run(hardcoded_remote_file, timeout=timeout)  # pylint: disable=missing-kwoa
 
     @Driver.check_active
     def run_script(self, data: bytes, timeout: int = 60):
@@ -510,7 +511,7 @@ class ShellDriver(CommandMixin, Driver, CommandProtocol, FileTransferProtocol):
 
         shargs = [shlex.quote(a) for a in args]
         cmd = "{} {}".format(hardcoded_remote_file, ' '.join(shargs))
-        return self._run(cmd, timeout=timeout)
+        return self._run(cmd, timeout=timeout)  # pylint: disable=missing-kwoa
 
     @Driver.check_active
     def run_script_file(self, scriptfile: str, *args, timeout: int = 60):

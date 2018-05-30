@@ -16,27 +16,27 @@ class ResourceEntry:
 
     @property
     def avail(self):
-        return self.data['avail']
+        return self.data['avail']  # pylint: disable=unsubscriptable-object
 
     @property
     def cls(self):
-        return self.data['cls']
+        return self.data['cls']  # pylint: disable=unsubscriptable-object
 
     @property
     def params(self):
-        return self.data['params']
+        return self.data['params']  # pylint: disable=unsubscriptable-object
 
     @property
     def args(self):
         """arguments for resource construction"""
-        args = self.data['params'].copy()
+        args = self.data['params'].copy()  # pylint: disable=unsubscriptable-object
         args.pop('extra', None)
         return args
 
     @property
     def extra(self):
         """extra resource information"""
-        return self.data['params'].get('extra', {})
+        return self.data['params'].get('extra', {})  # pylint: disable=unsubscriptable-object
 
     def asdict(self):
         return {
@@ -103,8 +103,8 @@ class Place:
     acquired = attr.ib(default=None)
     acquired_resources = attr.ib(default=attr.Factory(list))
     allowed = attr.ib(default=attr.Factory(set), convert=set)
-    created = attr.ib(default=attr.Factory(lambda: time.time()))
-    changed = attr.ib(default=attr.Factory(lambda: time.time()))
+    created = attr.ib(default=attr.Factory(lambda: time.time()))  # pylint: disable=unnecessary-lambda
+    changed = attr.ib(default=attr.Factory(lambda: time.time()))  # pylint: disable=unnecessary-lambda
 
     def asdict(self):
         result = attr.asdict(self)
@@ -116,11 +116,11 @@ class Place:
         print(indent + "aliases: {}".format(', '.join(self.aliases)))
         print(indent + "comment: {}".format(self.comment))
         print(indent + "matches:")
-        for match in self.matches:
+        for match in self.matches:  # pylint: disable=not-an-iterable
             print(indent + "  {}".format(match))
         print(indent + "acquired: {}".format(self.acquired))
         print(indent + "acquired resources:")
-        for resource_path in self.acquired_resources:
+        for resource_path in self.acquired_resources:  # pylint: disable=not-an-iterable
             match = self.getmatch(resource_path)
             if match.rename:
                 print(indent + "  {} → {}".format(
@@ -137,7 +137,7 @@ class Place:
 
         A resource_path has the structure (exporter, group, cls, name).
         """
-        for match in self.matches:
+        for match in self.matches:  # pylint: disable=not-an-iterable
             if match.ismatch(resource_path):
                 return match
 
