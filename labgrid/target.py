@@ -185,8 +185,8 @@ class Target:
                 found = prio_found
             else:
                 raise NoDriverFoundError(
-                    "multiple drivers matching {} found in target {} with the same priorities".format(cls, self)
-                   )
+                    "multiple drivers matching {} found in target {} with the same priorities".format(cls, self)  # pylint: disable=line-too-long
+                )
         if activate:
             self.activate(found[0])
         return found[0]
@@ -353,9 +353,7 @@ class Target:
                             requirements, self, errors)
                     )
             elif len(suppliers) > 1:
-                raise NoSupplierFoundError(
-                    "conflicting suppliers matching {} found in target {}".format(requirements, self)
-                )
+                raise NoSupplierFoundError("conflicting suppliers matching {} found in target {}".format(requirements, self))  # pylint: disable=line-too-long
             else:
                 supplier = suppliers[0]
             setattr(client, name, supplier)
