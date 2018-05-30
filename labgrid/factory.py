@@ -90,7 +90,7 @@ class TargetFactory:
             args = item # remaining args
             resources.setdefault(resource, {})[name] = (args, )
         for item in self._convert_to_named_list(config.get('drivers', {})):
-            driver = item.pop('cls')
+            resource = item.pop('cls')
             name = item.pop('name', None)
             bindings = item.pop('bindings', {})
             args = item # remaining args
