@@ -4,6 +4,7 @@ import pytest
 
 from .. import Environment
 from ..exceptions import NoResourceFoundError
+from ..remote.client import UserError
 from ..resource.remote import RemotePlace
 
 # pylint: disable=redefined-outer-name
@@ -113,5 +114,9 @@ def env(request):
 def target(env):
     """Return the default target `main` configured in the supplied
     configuration file."""
-    target = env.get_target()
+    try:
+        target = env.get_target()
+    except UserError as e:
+        pytest.exit(e)
+
     return target
