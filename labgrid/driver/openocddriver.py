@@ -72,4 +72,4 @@ class OpenOCDDriver(Driver, BootstrapProtocol):
             "--command", "'bootstrap {}'".format(filename),
             "--command", "'shutdown'",
         ]
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
