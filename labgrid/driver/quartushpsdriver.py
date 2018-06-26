@@ -85,4 +85,4 @@ class QuartusHPSDriver(Driver):
             "--addr=0x{:X}".format(address),
             "--operation=P {}".format(filename),
         ]
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
