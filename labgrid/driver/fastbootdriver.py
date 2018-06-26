@@ -43,7 +43,7 @@ class AndroidFastbootDriver(Driver):
     @Driver.check_active
     @step(title='call', args=['args'])
     def __call__(self, *args):
-        subprocess.check_call(self._get_fastboot_prefix() + list(args))
+        subprocess.check_output(self._get_fastboot_prefix() + list(args), stderr=subprocess.STDOUT)
 
     @Driver.check_active
     @step(args=['filename'])
