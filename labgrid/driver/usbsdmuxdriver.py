@@ -41,4 +41,4 @@ class USBSDMuxDriver(Driver):
             self.mux.control_path,
             mode.lower()
         ]
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
