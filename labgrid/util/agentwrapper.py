@@ -33,8 +33,9 @@ class AgentWrapper:
         agent_hash = hashlib.sha256(agent_data).hexdigest()
         agent_remote = '.labgrid_agent_{}.py'.format(agent_hash)
         ssh_opts = 'ssh -x -o ConnectTimeout=5 -o PasswordAuthentication=no'.split()
-        subprocess.check_call(
+        subprocess.check_output(
             ['rsync', '-e', ' '.join(ssh_opts), '-tq', agent, '{}:{}'.format(host, agent_remote)],
+            stderr=subprocess.STDOUT
         )
         self.agent = subprocess.Popen(
             ssh_opts + [host, '--', 'python3', agent_remote],
