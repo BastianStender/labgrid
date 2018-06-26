@@ -41,8 +41,9 @@ class MXSUSBDriver(Driver, BootstrapProtocol):
             filename = self.target.env.config.get_image_path(self.image)
         filename = os.path.abspath(filename)
         check_file(filename, command_prefix=self.loader.command_prefix)
-        subprocess.check_call(
-            self.loader.command_prefix+[self.tool, "0", filename]
+        subprocess.check_output(
+            self.loader.command_prefix+[self.tool, "0", filename],
+            stderr=subprocess.STDOUT
         )
 
 
@@ -76,6 +77,7 @@ class IMXUSBDriver(Driver, BootstrapProtocol):
             filename = self.target.env.config.get_image_path(self.image)
         filename = os.path.abspath(filename)
         check_file(filename, command_prefix=self.loader.command_prefix)
-        subprocess.check_call(
-            self.loader.command_prefix+[self.tool, "-p", str(self.loader.path), "-c", filename]
+        subprocess.check_output(
+            self.loader.command_prefix+[self.tool, "-p", str(self.loader.path), "-c", filename],
+            stderr=subprocess.STDOUT
         )
