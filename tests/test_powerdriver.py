@@ -1,3 +1,5 @@
+import subprocess
+
 from labgrid.resource import NetworkPowerPort
 from labgrid.driver.powerdriver import ExternalPowerDriver, ManualPowerDriver, NetworkPowerDriver
 
@@ -47,7 +49,7 @@ class TestExternalPowerDriver:
         assert (isinstance(d, ExternalPowerDriver))
 
     def test_on(self, target, mocker):
-        m = mocker.patch('subprocess.check_call')
+        m = mocker.patch('subprocess.check_output')
 
         d = ExternalPowerDriver(
             target, 'power', cmd_on='set -1 foo-board', cmd_off='set -0 foo-board'
@@ -55,10 +57,10 @@ class TestExternalPowerDriver:
         target.activate(d)
         d.on()
 
-        m.assert_called_once_with(['set', '-1', 'foo-board'])
+        m.assert_called_once_with(['set', '-1', 'foo-board'], stderr=subprocess.STDOUT)
 
     def test_off(self, target, mocker):
-        m = mocker.patch('subprocess.check_call')
+        m = mocker.patch('subprocess.check_output')
 
         d = ExternalPowerDriver(
             target, 'power', cmd_on='set -1 foo-board', cmd_off='set -0 foo-board'
@@ -66,11 +68,11 @@ class TestExternalPowerDriver:
         target.activate(d)
         d.off()
 
-        m.assert_called_once_with(['set', '-0', 'foo-board'])
+        m.assert_called_once_with(['set', '-0', 'foo-board'], stderr=subprocess.STDOUT)
 
     def test_cycle(self, target, mocker):
         m_sleep = mocker.patch('time.sleep')
-        m = mocker.patch('subprocess.check_call')
+        m = mocker.patch('subprocess.check_output')
 
         d = ExternalPowerDriver(
             target, 'power', cmd_on='set -1 foo-board', cmd_off='set -0 foo-board'
@@ -79,14 +81,14 @@ class TestExternalPowerDriver:
         d.cycle()
 
         assert m.call_args_list == [
-            mocker.call(['set', '-0', 'foo-board']),
-            mocker.call(['set', '-1', 'foo-board']),
+            mocker.call(['set', '-0', 'foo-board'], stderr=subprocess.STDOUT),
+            mocker.call(['set', '-1', 'foo-board'], stderr=subprocess.STDOUT),
         ]
         m_sleep.assert_called_once_with(2.0)
 
     def test_cycle_explicit(self, target, mocker):
         m_sleep = mocker.patch('time.sleep')
-        m = mocker.patch('subprocess.check_call')
+        m = mocker.patch('subprocess.check_output')
 
         d = ExternalPowerDriver(
             target, 'power',
@@ -97,7 +99,7 @@ class TestExternalPowerDriver:
         target.activate(d)
         d.cycle()
 
-        m.assert_called_once_with(['set', '-c', 'foo-board'])
+        m.assert_called_once_with(['set', '-c', 'foo-board'], stderr=subprocess.STDOUT)
         m_sleep.assert_not_called()
 
 class TestNetworkPowerDriver:

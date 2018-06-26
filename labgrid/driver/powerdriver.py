@@ -75,20 +75,20 @@ class ExternalPowerDriver(Driver, PowerResetMixin, PowerProtocol):
     @step()
     def on(self):
         cmd = shlex.split(self.cmd_on)
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
     @Driver.check_active
     @step()
     def off(self):
         cmd = shlex.split(self.cmd_off)
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
     @Driver.check_active
     @step()
     def cycle(self):
         if self.cmd_cycle is not None:
             cmd = shlex.split(self.cmd_cycle)
-            subprocess.check_call(cmd)
+            subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         else:
             self.off()
             time.sleep(self.delay)
@@ -227,7 +227,7 @@ class USBPowerDriver(Driver, PowerResetMixin, PowerProtocol):
             "-r", "100", # use 100 retries for now
             "-a", cmd,
         ]
-        subprocess.check_call(cmd)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
     @Driver.check_active
     @step()
