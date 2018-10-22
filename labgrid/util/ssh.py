@@ -105,8 +105,6 @@ class SSHConnectionManager:
             self.remove_by_name(name)
 
 
-
-
 @attr.s
 class SSHConnection:
     """SSHConnections are individual connections to hosts managed by a control
