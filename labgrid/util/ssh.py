@@ -260,7 +260,10 @@ class SSHConnection:
         return self._connected
 
     def _check_and_start_master(self):
-        args = ["ssh", "-O", "check", "{}".format(self.host)]
+        args = [
+            "ssh", "-o", "ControlPath={}".format(self._socket), "-O", "check",
+            "{}".format(self.host)
+        ]
         check = subprocess.call(
             args
         )
