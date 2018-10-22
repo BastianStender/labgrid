@@ -276,7 +276,7 @@ class SSHConnection:
         """Starts a controlmaster connection in a temporary directory."""
         args = [
             "ssh", "-n", "-x", "-o", "ConnectTimeout=30",
-            "-o", "ControlPersist=300", "-o", "UserKnownHostsFile=/dev/null",
+            "-o", "ControlPersist=0", "-o", "UserKnownHostsFile=/dev/null",
             "-o", "StrictHostKeyChecking=no", "-MN", "-o",
             "ControlPath={}".format(self._socket), self.host
         ]
