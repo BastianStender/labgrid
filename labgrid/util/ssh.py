@@ -267,15 +267,15 @@ class SSHConnection:
         if check == 0:
             return ""
 
-        return self._start_own_master()
+        self._start_own_master()
 
     def _start_own_master(self):
         """Starts a controlmaster connection in a temporary directory."""
-        control = os.path.join(self._tmpdir, 'control-{}'.format(self.host))
         args = [
             "ssh", "-n", "-x", "-o", "ConnectTimeout=30",
             "-o", "ControlPersist=300", "-o", "UserKnownHostsFile=/dev/null",
-            "-o", "StrictHostKeyChecking=no", "-MN", "-S", control, self.host
+            "-o", "StrictHostKeyChecking=no", "-MN", "-o",
+            "ControlPath={}".format(self._socket), self.host
         ]
         args[2:2] = self._ssh_prefix
 
@@ -300,12 +300,10 @@ class SSHConnection:
                 )
             )
 
-        if not os.path.exists(control):
+        if not os.path.exists(self._socket):
             raise ExecutionError("no control socket to {}".format(self.host))
 
         self._logger.debug('Connected to %s', self.host)
-
-        return control
 
     def _disconnect(self):
         self._run_socket_command("cancel")
