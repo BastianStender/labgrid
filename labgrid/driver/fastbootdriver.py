@@ -17,7 +17,10 @@ class AndroidFastbootDriver(Driver):
         "fastboot": {AndroidFastboot, NetworkAndroidFastboot},
     }
 
-    image = attr.ib(default=None)
+    image = attr.ib(
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(str))
+    )
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
@@ -54,7 +57,9 @@ class AndroidFastbootDriver(Driver):
 
     @Driver.check_active
     @step(args=['partition', 'filename'])
-    def flash(self, partition, filename):
+    def flash(self, partition, filename=None):
+        if filename is None and self.image is not None:
+            filename = self.target.env.config.get_image_path(self.image)
         mf = ManagedFile(filename, self.fastboot)
         mf.sync_to_resource()
         self("flash", partition, mf.get_remote_path())
