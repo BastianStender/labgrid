@@ -50,7 +50,9 @@ class AndroidFastbootDriver(Driver):
 
     @Driver.check_active
     @step(args=['filename'])
-    def boot(self, filename):
+    def boot(self, filename=None):
+        if filename is None and self.image is not None:
+            filename = self.target.env.config.get_image_path(self.image)
         mf = ManagedFile(filename, self.fastboot)
         mf.sync_to_resource()
         self("boot", mf.get_remote_path())

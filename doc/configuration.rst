@@ -861,8 +861,8 @@ Arguments:
 
 AndroidFastbootDriver
 ~~~~~~~~~~~~~~~~~~~~~
-An AndroidFastbootDriver allows the upload of images to a device in the USB
-fastboot state.
+An AndroidFastbootDriver allows image upload, booting images and executing
+commands on a device in USB fastboot state.
 
 Binds to:
   fastboot:
@@ -877,7 +877,7 @@ Implements:
      image: mylocal.image
 
 Arguments:
-  - image (str): filename of the image to upload to the device
+  - image (str): filename of the image to upload to or boot on the device
 
 OpenOCDDriver
 ~~~~~~~~~~~~~

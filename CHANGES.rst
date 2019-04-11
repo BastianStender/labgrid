@@ -10,6 +10,8 @@ New Features in 0.3.0
   ``write-image`` command to write images onto block devices.
 - ``labgrid-client ssh`` now also uses port from NetworkService resource if
   available
+- AndroidFastbootDriver now supports booting an image configured in the config
+  (similar to flashing such an image).
 
 Breaking changes in 0.3.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~
